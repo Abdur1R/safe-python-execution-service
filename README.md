@@ -118,66 +118,6 @@ curl -X POST http://localhost:8080/execute \
   }'
 ```
 
-## Deployment
+### You can access this API Service using below url (It's deployed in google cloud):
 
-### Google Cloud Run
-
-1. Build and push the image to Google Container Registry:
-```bash
-docker build -t gcr.io/YOUR_PROJECT_ID/safe-python-execution .
-docker push gcr.io/YOUR_PROJECT_ID/safe-python-execution
-```
-
-2. Deploy to Cloud Run:
-```bash
-gcloud run deploy safe-python-execution \
-  --image gcr.io/YOUR_PROJECT_ID/safe-python-execution \
-  --platform managed \
-  --region us-central1 \
-  --allow-unauthenticated \
-  --port 8080
-```
-
-## Security Features
-
-- **nsjail Sandboxing**: Isolates execution environment
-- **Resource Limits**: 
-  - 10-second execution timeout
-  - 100MB memory limit
-  - Single process limit
-- **Input Validation**: AST-based validation for dangerous operations
-- **Non-root Execution**: Runs as user ID 1000
-- **Read-only Mounts**: System directories mounted as read-only
-- **Chroot Environment**: Restricted file system access
-
-## Error Handling
-
-The service returns appropriate HTTP status codes:
-
-- `400 Bad Request`: Invalid input (missing main function, invalid JSON, etc.)
-- `500 Internal Server Error`: Execution errors (timeout, memory limit, etc.)
-
-## Limitations
-
-- Scripts must contain a `main()` function
-- `main()` function must return JSON-serializable data
-- No access to dangerous modules (subprocess, os, sys, eval, exec)
-- 10-second execution timeout
-- 100MB memory limit
-- Single process execution
-
-## Troubleshooting
-
-### Common Errors
-
-1. **"Script must contain a main() function"**: Ensure your script defines a `main()` function
-2. **"main() function must return valid JSON"**: Make sure your `main()` function returns JSON-serializable data
-3. **"Dangerous import detected"**: Remove imports of subprocess, os, sys, eval, or exec
-4. **"Script execution failed"**: Check for syntax errors or runtime issues in your script
-
-### Health Check
-
-Test if the service is running:
-```bash
-curl http://localhost:8080/health
-```
+https://safe-python-execution-59672737869.us-central1.run.app/execute
